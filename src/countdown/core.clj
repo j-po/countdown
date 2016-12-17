@@ -33,5 +33,3 @@
            (postwalk #(if (sequential? %) (seq %) %))
            eval
            (= goal)))
-
-(defn )
