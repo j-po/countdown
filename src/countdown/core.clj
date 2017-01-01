@@ -24,7 +24,9 @@
 (defn goal [xs]
   (let [ops [+ - * /]]
     (repeatedly #(reduce operate-rand
-                         (shuffle xs)))))
+                         ;; use between 2 and 6 (all) of the numbers
+                         (take (+ 2 (rand-int 5))
+                               (shuffle xs))))))
 
 (defn check-solution [goal solution]
   (when (s/valid? :countdown.spec/prefix-solution solution)
