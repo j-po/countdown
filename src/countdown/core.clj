@@ -27,9 +27,8 @@
                          (shuffle xs)))))
 
 (defn check-solution [goal solution]
-  (some->> solution
-           (s/conform :countdown.spec/prefix-solution)
-           (s/unform :countdown.spec/prefix-solution)
-           (postwalk #(if (sequential? %) (seq %) %))
-           eval
-           (= goal)))
+  (when (s/valid? :countdown.spec/prefix-solution solution)
+    (->> solution
+         (postwalk #(if (sequential? %) (seq %) %))
+         eval
+         (= goal))))
