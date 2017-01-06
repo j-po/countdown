@@ -1,8 +1,13 @@
 (ns countdown.core-test
   (:require [clojure.java.io :as io]
+            [clojure.spec :as s]
             [clojure.spec.test :as stest]
             [clojure.test :refer :all]
             [countdown.core :refer :all]))
+
+(deftest test-goal
+  (testing "goal"
+    (is (not (:failure (stest/check `goal))))))
 
 (deftest test-check-solution
   (testing "check-solution"

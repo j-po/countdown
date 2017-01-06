@@ -13,6 +13,10 @@
                :big-one #{25 50 75 100}
                :little-one (s/and integer? #(< 0 % 11))))
 
+(s/fdef countdown.core/goal
+        :args (s/cat :xs (s/coll-of ::num :count 6))
+        :ret (s/and pos? integer?))
+
 (s/def ::prefix-solution
   ;;TODO: Add support for more than two arguments
   (s/or :arg ::num

@@ -19,14 +19,15 @@
   "Perform a random operation on two numbers,
   but retry if the result is not an integer."
   [ops n m]
-  (first (filter integer? (map #(% n m) (shuffle ops)))))
+  (first (filter (every-pred integer? pos?)
+                 (map #(% n m) (shuffle ops)))))
 
 (defn goal [xs]
   (let [ops [+ - * /]]
-    (repeatedly #(reduce operate-rand
+    (reduce (partial operate-rand ops)
                          ;; use between 2 and 6 (all) of the numbers
                          (take (+ 2 (rand-int 5))
-                               (shuffle xs))))))
+                               (shuffle xs)))))
 
 (defn check-solution [goal solution]
   (when (s/valid? :countdown.spec/prefix-solution solution)
