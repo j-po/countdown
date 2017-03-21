@@ -1,9 +1,11 @@
 (ns countdown.core
   (:require [clojure.edn :as edn]
-            [countdown.numbers :refer [seventy-fives
-                                       gen-numbers
-                                       gen-target
-                                       check-solution]]))
+            [countdown
+             [jokes :refer [gen-joke!]]
+             [numbers :refer [seventy-fives
+                              gen-numbers
+                              gen-target
+                              check-solution]]]))
 
 (defn user-input
   ([] (user-input "exit"))
@@ -34,6 +36,7 @@
 (defn game-loop [input game-state]
   (case (:stage game-state)
     :begin (do
+             (println (gen-joke!))
              (println "LET'S PLAY COUNTDOWN!!")
              (println "How many big ones?")
              (recur (validate-num-big!)
