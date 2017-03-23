@@ -11,14 +11,22 @@
                   "Sean Lock"
                   "the player"})
 
-(s/def ::topic #{"tax"
-                 "sex life"
-                 "overwhelming dullness"
-                 "new book"
-                 "dietary restrictions"
-                 "deepest fears"
-                 "hair"
-                 "weird laugh"})
+(s/def ::topic (s/cat
+                 :other-modifier (s/? #{"conspicuous absence of"})
+                 :adjective (s/* #{"distinctive"
+                                   "overwhelming"
+                                   "embarrassing"
+                                   "weird"
+                                   "new"
+                                   "stupefying"})
+                 :characteristic #{"tax status"
+                                   "sex life"
+                                   "dullness"
+                                   "book"
+                                   "dietary restrictions"
+                                   "deepest fears"
+                                   "hair"
+                                   "laugh"}))
 
 (s/def ::context #{"Dictionary Corner"
                    "the bonus round"
@@ -40,4 +48,9 @@
                ::verb
                ::object
                ::topic]} (gen/generate (s/gen ::joke))]
-        (string/join " " ["In" (str context ",") subject verb (str object "'s") (str topic ".")])))
+    ;; TODO: Sugar this process better. Make semantically-related things go together.
+   ;; Have a DSL for grammars. I dunno. Go wild. Decomplect joke generation and grammar
+   ;; definition. In the process, probably recomplect the different components of grammar
+   ;; definition that we separated here.
+        (string/join " " ["In" (str context ",")
+                          subject verb (str object "'s") (str (string/join " " topic) ".")])))
