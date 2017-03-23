@@ -10,7 +10,7 @@
 
 (defn gen-numbers [nbig]
   (let [big (take nbig (shuffle [100 75 50 25]))
-        little (take (- 6 nbig) (repeatedly #(inc (rand-int 9))))]
+        little (repeatedly (- 6 nbig) #(inc (rand-int 9)))]
     (concat big little)))
 
 (defn operate-rand
