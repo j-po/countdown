@@ -89,11 +89,13 @@
                    ("y" "yes") (recur ""
                                       {:stage :begin
                                        :score (:score game-state)})
-                   ("n" "no") (recur nil {:score {:score game-state}})
+                   ("n" "no") (recur nil {:score (:score game-state)})
                    (do
                      (println "Sorry, didn't catch that. Play again? (y/yes/n/no)")
                      (recur (user-input)
-                            game-state)))))
+                            game-state)))
+    (do
+      (println (str "Thanks for playing! You scored " (:score game-state) " points!")))))
 
 (defn -main []
   (game-loop "" {:stage :begin
