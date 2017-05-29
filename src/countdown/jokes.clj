@@ -1,7 +1,10 @@
 (ns countdown.jokes
-  (:require [clojure.spec :as s]
+  (:require [clojure
+             [spec :as s]
+             [string :as string]
+             [walk :refer [postwalk]]]
             [clojure.spec.gen :as gen]
-            [clojure.string :as string]))
+            [com.rpl.specter :refer [select walker]]))
 
 (s/def ::person #{"Susie Dent"
                   "Jon Richardson"
@@ -42,7 +45,43 @@
 
 (s/def ::joke (s/keys :req [::context ::subject ::verb ::object ::topic]))
 
+;; gotta use a macro, I guess o_O. I mean, if that even works... :'((
+
+(def jokes (volatile! [])) ;;only mutated at read time, so no need for atom semantics
+
+(defmacro defjoke [joke-kw fmt]
+  (let [ks (select (walker keyword?) fmt)]
+    `(do
+       (s/def ~joke-kw (s/keys :req ~ks))
+       (vswap! jokes conj [~joke-kw ~fmt]))))
+
+(defjoke ::basic ["In " ::context ", " ::subject " " ::verb " " ::object "'s " ::topic])
+
 (defn gen-joke! []
+  (let [[kw fmt] (rand-nth @jokes)
+        content (gen/generate (s/gen kw))]
+    (postwalk #(cond
+                 (keyword? %) (% content)
+                 (sequential? %) (string/join "" %)
+                 :else %) fmt)))
+
+(gen-joke!)
+
+(defn format-joke-bad [fmt]
+  (let [specs (vec (filter keyword? fmt))
+        content (gen/generate (s/gen (s/keys :req ~`specs)))]
+    (println "keys: " (filter keyword? fmt))
+    (s/keys :req (filter keyword? fmt))
+    (println "content: " content)
+    (string/join " " (replace content fmt))))
+
+(def my-fmt [::person ::verb "their own" ::topic])
+
+(format-joke my-fmt)
+
+(s/describe (s/keys :req ~'(into [] (filter keyword? my-fmt))))
+
+(defn gen-joke-bad! []
   (let [{:keys [::context
                ::subject
                ::verb
